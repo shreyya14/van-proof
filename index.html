@@ -1,1 +1,32 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Van Delivery Proof</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <h2>Van Delivery Proof</h2>
+
+  <p id="userInfo">Loading user info...</p>
+
+  <input 
+    type="file" 
+    accept="image/*" 
+    capture="environment"
+    id="photoInput"
+  >
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("user_id");
+    const username = params.get("username");
+
+    document.getElementById("userInfo").innerText =
+      "User: " + (username || "Unknown") + 
+      " | ID: " + (userId || "Not provided");
+  </script>
+
+</body>
+</html>
