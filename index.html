@@ -1,31 +1,69 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <title>Van Delivery Proof</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 16px;
+    }
+    .hidden {
+      display: none;
+    }
+    .box {
+      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: 6px;
+    }
+    button {
+      padding: 10px 16px;
+      font-size: 16px;
+      margin-top: 12px;
+    }
+  </style>
 </head>
 <body>
 
-  <h2>Van Delivery Proof</h2>
+  <!-- SCREEN 1: USER DETAILS -->
+  <div id="screen1" class="box">
+    <h3>Van Delivery – User Verification</h3>
 
-  <p id="userInfo">Loading user info...</p>
+    <p><b>Employee Name:</b> <span id="empName"></span></p>
+    <p><b>Employee ID:</b> <span id="empId"></span></p>
 
-  <input 
-    type="file" 
-    accept="image/*" 
-    capture="environment"
-    id="photoInput"
-  >
+    <button onclick="goToScreen2()">Continue</button>
+  </div>
+
+  <!-- SCREEN 2: PHOTO PROOF -->
+  <div id="screen2" class="box hidden">
+    <h3>Van Delivery – Proof Required</h3>
+
+    <p>Please capture a live photo of the van.</p>
+
+    <input 
+      type="file" 
+      accept="image/*" 
+      capture="environment"
+      id="photoInput"
+    >
+
+  </div>
 
   <script>
+    // Read values from URL
     const params = new URLSearchParams(window.location.search);
-    const userId = params.get("user_id");
-    const username = params.get("username");
+    const empName = params.get("emp_name");
+    const empId = params.get("emp_id");
 
-    document.getElementById("userInfo").innerText =
-      "User: " + (username || "Unknown") + 
-      " | ID: " + (userId || "Not provided");
+    // Show auto-filled data
+    document.getElementById("empName").innerText = empName || "Not provided";
+    document.getElementById("empId").innerText = empId || "Not provided";
+
+    function goToScreen2() {
+      document.getElementById("screen1").classList.add("hidden");
+      document.getElementById("screen2").classList.remove("hidden");
+    }
   </script>
 
 </body>
