@@ -3,14 +3,66 @@
 <head>
   <title>Aachi VanMarket Confirmation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body { font-family: Arial; background: #f4f6fb; padding: 16px; }
-    h2 { text-align: center; }
-    .box { background: #fff; padding: 16px; border-radius: 8px; }
-    label { font-weight: bold; margin-top: 10px; display: block; }
-    input { width: 100%; height: 38px; margin-top: 4px; padding: 6px; }
-    button { width: 100%; margin-top: 20px; padding: 14px; background: #1f4fd8; color: #fff; border: none; }
-    button:disabled { background: #aaa; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      padding: 14px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .box {
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+    }
+    label {
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 12px;
+      display: block;
+    }
+    input {
+      width: 100%;
+      height: 38px;
+      padding: 6px 10px;
+      margin-top: 4px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .rs-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rs-box span {
+      font-weight: bold;
+    }
+    .rs-box input {
+      flex: 1;
+    }
+    input[type="file"] {
+      height: auto;
+      padding: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      margin-top: 20px;
+      background: #2bb673;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+    button:disabled {
+      background: #bdbdbd;
+    }
   </style>
 </head>
 
@@ -19,95 +71,91 @@
 <h2>Aachi VanMarket Confirmation</h2>
 
 <div class="box">
-  <label>Employee ERP ID</label>
-  <input id="empId">
 
-  <label>Employee Name</label>
-  <input id="empName">
+  <label>Employee ERP ID *</label>
+  <input id="empId" required>
 
-  <label>Van Number</label>
-  <input id="vanNumber">
+  <label>Employee Name *</label>
+  <input id="empName" required>
 
-  <label>Van Type</label>
-  <input id="vanType">
+  <label>Van Number *</label>
+  <input id="vanNumber" required>
 
-  <label>Van Photo</label>
-  <input type="file" id="vanPhoto" accept="image/*" capture="environment">
+  <label>Van Type *</label>
+  <input id="vanType" placeholder="Ex: Tata Ace" required>
 
-  <label>Stock Value</label>
-  <input id="stockValue">
+  <label>Upload Van Front Photo *</label>
+  <input type="file" id="vanPhoto" accept="image/*" capture="environment" required>
 
-  <label>Sale Value</label>
-  <input id="saleValue">
+  <label>Current Stock in Van *</label>
+  <div class="rs-box">
+    <span>Rs.</span>
+    <input type="number" id="stockValue" required>
+  </div>
 
-  <label>Distributor Name</label>
-  <input id="distributorName">
+  <label>Van Sale Till Now *</label>
+  <div class="rs-box">
+    <span>Rs.</span>
+    <input type="number" id="saleValue" required>
+  </div>
+
+  <label>Distributor Name *</label>
+  <input id="distributorName" required>
 
   <button id="submitBtn" disabled onclick="submitForm()">Submit Confirmation</button>
+
 </div>
 
 <script>
 const submitBtn = document.getElementById("submitBtn");
-const photoInput = document.getElementById("vanPhoto");
+const requiredFields = [
+  "empId", "empName", "vanNumber", "vanType",
+  "stockValue", "saleValue", "distributorName"
+];
 
-photoInput.addEventListener("change", () => {
-  submitBtn.disabled = true;
+function checkEnable() {
+  const allFilled = requiredFields.every(id => document.getElementById(id).value.trim() !== "");
+  const photoOk = document.getElementById("vanPhoto").files.length > 0;
+  submitBtn.disabled = !(allFilled && photoOk);
+}
+
+// Attach listeners
+requiredFields.forEach(id => {
+  document.getElementById(id).addEventListener("input", checkEnable);
 });
+document.getElementById("vanPhoto").addEventListener("change", checkEnable);
 
 function submitForm() {
-  alert("STEP 1: Submit clicked");
+  submitBtn.disabled = true;
 
-  if (!navigator.geolocation) {
-    alert("Geolocation not supported");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    position => {
-      alert("STEP 2: Location captured");
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        alert("STEP 3: Photo read");
-
-        fetch("https://script.google.com/macros/s/AKfycbyJXVWW4akGP-q2-2Dnn7Mjn2RiaCcWtgraMg9JQ0TSE1VyGWcO72TozLARykFK_xgPrw/exec", {
-          method: "POST",
-           headers: {
-             "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            empId: empId.value.trim(),
-            empName: empName.value,
-            vanNumber: vanNumber.value,
-            vanType: vanType.value,
-            stockValue: stockValue.value,
-            saleValue: saleValue.value,
-            distributorName: distributorName.value,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            image: reader.result.split(",")[1]
-          })
+  navigator.geolocation.getCurrentPosition(position => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      fetch("https://script.google.com/macros/s/AKfycbyJXVWW4akGP-q2-2Dnn7Mjn2RiaCcWtgraMg9JQ0TSE1VyGWcO72TozLARykFK_xgPrw/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          empId: empId.value.trim(),
+          empName: empName.value,
+          vanNumber: vanNumber.value,
+          vanType: vanType.value,
+          stockValue: stockValue.value,
+          saleValue: saleValue.value,
+          distributorName: distributorName.value,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          image: reader.result.split(",")[1]
         })
-        .then(res => {
-          alert("STEP 4: Server responded");
-          return res.text();
-        })
-        .then(text => {
-          alert("SERVER RESPONSE:\n" + text);
-        })
-        .catch(err => {
-          alert("FETCH ERROR: " + err);
-        });
-      };
-
-      reader.readAsDataURL(vanPhoto.files[0]);
-    },
-    error => {
-      alert("LOCATION ERROR: Please allow location");
-    }
-  );
+      })
+      .then(res => res.text())
+      .then(text => alert(text))
+      .catch(err => alert("Error: " + err));
+    };
+    reader.readAsDataURL(vanPhoto.files[0]);
+  }, () => alert("Location permission required"));
 }
 </script>
 
 </body>
 </html>
+    
