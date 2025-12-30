@@ -126,7 +126,7 @@ requiredFields.forEach(id => {
 document.getElementById("vanPhoto").addEventListener("change", checkEnable);
 
 function submitForm() {
-  submitBtn.disabled = true;
+  submitBtn.disabled = false;
 
   navigator.geolocation.getCurrentPosition(position => {
     const reader = new FileReader();
