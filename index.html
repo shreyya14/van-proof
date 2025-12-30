@@ -113,72 +113,36 @@
 </div>
 
 <script>
-const submitBtn = document.getElementById("submitBtn");
-const requiredFields = [
-  "empId", "empName", "vanNumber", "vanType",
-  "stockValue", "saleValue", "distributorName"
-];
-
-function checkEnable() {
-  const allFilled = requiredFields.every(id =>
-    document.getElementById(id).value.trim() !== ""
-  );
-  const photoOk = document.getElementById("vanPhoto").files.length > 0;
-
-  if (allFilled && photoOk) {
-    submitBtn.disabled = false;
-    document.getElementById("hint").style.display = "none";
-  } else {
-    submitBtn.disabled = true;
-    document.getElementById("hint").style.display = "block";
-  }
-}
-
-requiredFields.forEach(id =>
-  document.getElementById(id).addEventListener("input", checkEnable)
-);
-document.getElementById("vanPhoto").addEventListener("change", checkEnable);
-
+  
 function submitForm() {
-  submitBtn.disabled = true;
 
-  if (!navigator.geolocation) {
-    alert("Location not supported");
-    submitBtn.disabled = false;
-    return;
-  }
+  const payload = {
+    empId: empId.value,
+    empName: empName.value,
+    vanNumber: vanNumber.value,
+    vanType: vanType.value,
+    stockValue: stockValue.value,
+    saleValue: saleValue.value,
+    distributorName: distributorName.value
+  };
 
-  navigator.geolocation.getCurrentPosition(position => {
-
-    const formData = new FormData();
-    formData.append("empId", empId.value.trim());
-    formData.append("empName", empName.value);
-    formData.append("vanNumber", vanNumber.value);
-    formData.append("vanType", vanType.value);
-    formData.append("stockValue", stockValue.value);
-    formData.append("saleValue", saleValue.value);
-    formData.append("distributorName", distributorName.value);
-    formData.append("latitude", position.coords.latitude);
-    formData.append("longitude", position.coords.longitude);
-    formData.append("photo", vanPhoto.files[0]);
-
-    fetch("https://script.google.com/macros/s/AKfycbzn-Cj_K9UlXM6oHtF14PPu9NvT5kE6Mx0ORv0L8qvHAg9FPeAZT9vEiSTmdgWLfN6kqQ/exec", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.text())
-    .then(text => {
-      alert(text);
-      submitBtn.disabled = false;
-    })
-    .catch(() => {
-      alert("Network error. Please try again.");
-      submitBtn.disabled = false;
-    });
-
-  }, () => {
-    alert("Location permission required");
-    submitBtn.disabled = false;
+  fetch("PASTE_NEW_WEB_APP_URL_HERE", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8"
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      alert("✅ Submitted successfully");
+    } else {
+      alert("❌ " + data.message);
+    }
+  })
+  .catch(err => {
+    alert("❌ Network / POST error:\n" + err);
   });
 }
 </script>
