@@ -162,7 +162,7 @@ function submitForm() {
     formData.append("longitude", position.coords.longitude);
     formData.append("photo", vanPhoto.files[0]);
 
-    fetch("PASTE_NEW_APPS_SCRIPT_URL_HERE", {
+    fetch("https://script.google.com/macros/s/AKfycbybbdcpdC1v3TDcfu7EvE9PBo7qKFsTCC2MErMrAwHo-f8ONdGAwP_hNalWdgtjFpXVhA/exec", {
       method: "POST",
       body: formData
     })
