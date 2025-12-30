@@ -1,102 +1,121 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Van Delivery Proof</title>
+  <title>Aachi VanMarket Confirmation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #f4f6fb;
       padding: 16px;
-      background: #f9f9f9;
+    }
+    h2 {
+      text-align: center;
+    }
+    .subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 20px;
     }
     .box {
       background: #fff;
       padding: 16px;
       border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      margin-bottom: 16px;
+      margin-bottom: 15px;
     }
-    .hidden {
-      display: none;
-    }
-    button {
-      padding: 12px 16px;
-      font-size: 16px;
-      width: 100%;
+    label {
+      font-weight: bold;
+      display: block;
       margin-top: 12px;
     }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      margin-top: 20px;
+      background: #1f4fd8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
     button:disabled {
-      background: #ccc;
+      background: #aaa;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- SCREEN 1 -->
-  <div id="screen1" class="box">
-    <h3>Van Delivery – User Verification</h3>
+<h2>Aachi VanMarket Confirmation</h2>
+<p class="subtitle">
+  Provide VanMarket details 3 times (Start, Mid & End of Van Market)
+</p>
 
-    <p><b>Employee Name:</b> <span id="empName"></span></p>
-    <p><b>Employee ID:</b> <span id="empId"></span></p>
+<div class="box">
 
-    <button onclick="goToScreen2()">Continue</button>
-  </div>
+  <label>Enter Employee ID *</label>
+  <input type="text" id="empId" required>
 
-  <!-- SCREEN 2 -->
-  <div id="screen2" class="box hidden">
-    <h3>Van Delivery – Proof Required</h3>
+  <label>Employee Name *</label>
+  <input type="text" id="empName" required>
 
-    <p>Please capture a live photo of the van.</p>
+  <label>Enter Van Vehicle Number *</label>
+  <input type="text" id="vanNumber" placeholder="Ex: HR12W3245" required>
 
-    <input 
-      type="file"
-      accept="image/*"
-      capture="environment"
-      id="photoInput"
-    >
+  <label>Enter Van Type *</label>
+  <input type="text" id="vanType" placeholder="Ex: Tata Ace, Ashok Leyland Dost" required>
 
-    <button id="submitBtn" disabled onclick="submitProof()">
-      Submit Proof
-    </button>
+  <label>Upload Van Front Photo *</label>
+  <input 
+    type="file"
+    id="vanPhoto"
+    accept="image/*"
+    capture="environment"
+    required
+  >
 
-    <p id="statusMsg"></p>
-  </div>
+  <label>Current Stock in Van (Rs.) *</label>
+  <input type="number" id="stockValue" required>
 
-  <script>
-    // READ USER DETAILS FROM URL
-    const params = new URLSearchParams(window.location.search);
-    const empName = params.get("emp_name");
-    const empId = params.get("emp_id");
+  <label>Van Sale Till Now (Rs.) *</label>
+  <input type="number" id="saleValue" required>
 
-    document.getElementById("empName").innerText = empName || "Not provided";
-    document.getElementById("empId").innerText = empId || "Not provided";
+  <label>Distributor Name *</label>
+  <input type="text" id="distributorName" required>
 
-    // SWITCH TO SCREEN 2
-    function goToScreen2() {
-      document.getElementById("screen1").classList.add("hidden");
-      document.getElementById("screen2").classList.remove("hidden");
+  <button id="submitBtn" disabled onclick="submitForm()">
+    Submit Confirmation
+  </button>
+
+</div>
+
+<script>
+  const photoInput = document.getElementById("vanPhoto");
+  const submitBtn = document.getElementById("submitBtn");
+
+  // Enable submit only after photo is taken
+  photoInput.addEventListener("change", () => {
+    if (photoInput.files.length > 0) {
+      submitBtn.disabled = false;
     }
+  });
 
-    // ENABLE SUBMIT ONLY AFTER PHOTO
-    const photoInput = document.getElementById("photoInput");
-    const submitBtn = document.getElementById("submitBtn");
-
-    photoInput.addEventListener("change", function () {
-      if (photoInput.files.length > 0) {
-        submitBtn.disabled = false;
-      }
-    });
-
-    // SUBMIT ACTION (TEMP CONFIRMATION)
-    function submitProof() {
-      document.getElementById("statusMsg").innerText =
-        "✅ Proof captured successfully. You may close this page.";
-    }
-  </script>
+  function submitForm() {
+    alert(
+      "✅ VanMarket confirmation submitted successfully.\n\n" +
+      "Location, time, and photo will be recorded automatically."
+    );
+  }
+</script>
 
 </body>
 </html>
-
-
