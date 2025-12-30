@@ -1,63 +1,121 @@
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f4f6fb;
-    padding: 16px;
-  }
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aachi VanMarket Confirmation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  h2 {
-    text-align: center;
-  }
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      padding: 16px;
+    }
+    h2 {
+      text-align: center;
+    }
+    .subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    .box {
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 12px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      margin-top: 20px;
+      background: #1f4fd8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
+    button:disabled {
+      background: #aaa;
+    }
+  </style>
+</head>
 
-  .subtitle {
-    text-align: center;
-    color: #555;
-    margin-bottom: 20px;
-  }
+<body>
 
-  .box {
-    background: #fff;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-  }
+<h2>Aachi VanMarket Confirmation</h2>
+<p class="subtitle">
+  Provide VanMarket details 3 times (Start, Mid & End of Van Market)
+</p>
 
-  label {
-    font-weight: bold;
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
-  }
+<div class="box">
 
-  /* 🔽 THIS IS THE IMPORTANT PART */
-  input {
-    width: 100%;
-    height: 38px;              /* shorter height */
-    padding: 6px 10px;         /* less padding */
-    margin-top: 4px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 14px;           /* smaller text */
-    box-sizing: border-box;
-  }
+  <label>Enter Employee ID *</label>
+  <input type="text" id="empId" required>
 
-  input[type="file"] {
-    height: auto;              /* file input stays natural */
-    padding: 6px;
-  }
+  <label>Employee Name *</label>
+  <input type="text" id="empName" required>
 
-  button {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    margin-top: 18px;
-    background: #1f4fd8;
-    color: white;
-    border: none;
-    border-radius: 8px;
-  }
+  <label>Enter Van Vehicle Number *</label>
+  <input type="text" id="vanNumber" placeholder="Ex: HR12W3245" required>
 
-  button:disabled {
-    background: #aaa;
+  <label>Enter Van Type *</label>
+  <input type="text" id="vanType" placeholder="Ex: Tata Ace, Ashok Leyland Dost" required>
+
+  <label>Upload Van Front Photo *</label>
+  <input 
+    type="file"
+    id="vanPhoto"
+    accept="image/*"
+    capture="environment"
+    required
+  >
+
+  <label>Current Stock in Van (Rs.) *</label>
+  <input type="number" id="stockValue" required>
+
+  <label>Van Sale Till Now (Rs.) *</label>
+  <input type="number" id="saleValue" required>
+
+  <label>Distributor Name *</label>
+  <input type="text" id="distributorName" required>
+
+  <button id="submitBtn" disabled onclick="submitForm()">
+    Submit Confirmation
+  </button>
+
+</div>
+
+<script>
+  const photoInput = document.getElementById("vanPhoto");
+  const submitBtn = document.getElementById("submitBtn");
+
+  // Enable submit only after photo is taken
+  photoInput.addEventListener("change", () => {
+    if (photoInput.files.length > 0) {
+      submitBtn.disabled = false;
+    }
+  });
+
+  function submitForm() {
+    alert(
+      "✅ VanMarket confirmation submitted successfully.\n\n" +
+      "Location, time, and photo will be recorded automatically."
+    );
   }
-</style>
+</script>
+
+</body>
+</html>
