@@ -51,7 +51,7 @@ const submitBtn = document.getElementById("submitBtn");
 const photoInput = document.getElementById("vanPhoto");
 
 photoInput.addEventListener("change", () => {
-  submitBtn.disabled = false;
+  submitBtn.disabled = true;
 });
 
 function submitForm() {
@@ -76,7 +76,7 @@ function submitForm() {
              "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            empId: empId.value,
+            empId: empId.value.trim(),
             empName: empName.value,
             vanNumber: vanNumber.value,
             vanType: vanType.value,
