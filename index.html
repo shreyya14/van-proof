@@ -72,6 +72,9 @@ function submitForm() {
 
         fetch("https://script.google.com/macros/s/AKfycbyJXVWW4akGP-q2-2Dnn7Mjn2RiaCcWtgraMg9JQ0TSE1VyGWcO72TozLARykFK_xgPrw/exec", {
           method: "POST",
+           headers: {
+             "Content-Type": "application/json"
+          },
           body: JSON.stringify({
             empId: empId.value,
             empName: empName.value,
