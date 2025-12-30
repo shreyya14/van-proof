@@ -12,7 +12,7 @@
     }
     h2 {
       text-align: center;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
     }
     .box {
       background: #fff;
@@ -35,6 +35,10 @@
       font-size: 14px;
       box-sizing: border-box;
     }
+    input[type="file"] {
+      height: auto;
+      padding: 6px;
+    }
     .rs-box {
       display: flex;
       align-items: center;
@@ -45,10 +49,6 @@
     }
     .rs-box input {
       flex: 1;
-    }
-    input[type="file"] {
-      height: auto;
-      padding: 6px;
     }
     button {
       width: 100%;
@@ -62,6 +62,11 @@
     }
     button:disabled {
       background: #bdbdbd;
+    }
+    #hint {
+      color: #d32f2f;
+      font-size: 13px;
+      margin-top: 8px;
     }
   </style>
 </head>
@@ -103,6 +108,7 @@
   <input id="distributorName" required>
 
   <button id="submitBtn" disabled onclick="submitForm()">Submit Confirmation</button>
+  <p id="hint">Please fill all fields and upload photo</p>
 
 </div>
 
@@ -114,48 +120,68 @@ const requiredFields = [
 ];
 
 function checkEnable() {
-  const allFilled = requiredFields.every(id => document.getElementById(id).value.trim() !== "");
+  const allFilled = requiredFields.every(id =>
+    document.getElementById(id).value.trim() !== ""
+  );
   const photoOk = document.getElementById("vanPhoto").files.length > 0;
-  submitBtn.disabled = !(allFilled && photoOk);
+
+  if (allFilled && photoOk) {
+    submitBtn.disabled = false;
+    document.getElementById("hint").style.display = "none";
+  } else {
+    submitBtn.disabled = true;
+    document.getElementById("hint").style.display = "block";
+  }
 }
 
-// Attach listeners
-requiredFields.forEach(id => {
-  document.getElementById(id).addEventListener("input", checkEnable);
-});
+requiredFields.forEach(id =>
+  document.getElementById(id).addEventListener("input", checkEnable)
+);
 document.getElementById("vanPhoto").addEventListener("change", checkEnable);
 
 function submitForm() {
-  submitBtn.disabled = false;
+  submitBtn.disabled = true;
+
+  if (!navigator.geolocation) {
+    alert("Location not supported");
+    submitBtn.disabled = false;
+    return;
+  }
 
   navigator.geolocation.getCurrentPosition(position => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      fetch("https://script.google.com/macros/s/AKfycbxRJRWyLG3bB76sjkfOWFE7hzkGfBsHgfz5pU51kXKSGDJs3LZrHofERTgInou3I8_oyg/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          empId: empId.value.trim(),
-          empName: empName.value,
-          vanNumber: vanNumber.value,
-          vanType: vanType.value,
-          stockValue: stockValue.value,
-          saleValue: saleValue.value,
-          distributorName: distributorName.value,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          image: reader.result.split(",")[1]
-        })
-      })
-      .then(res => res.text())
-      .then(text => alert(text))
-      .catch(err => alert("Error: " + err));
-    };
-    reader.readAsDataURL(vanPhoto.files[0]);
-  }, () => alert("Location permission required"));
+
+    const formData = new FormData();
+    formData.append("empId", empId.value.trim());
+    formData.append("empName", empName.value);
+    formData.append("vanNumber", vanNumber.value);
+    formData.append("vanType", vanType.value);
+    formData.append("stockValue", stockValue.value);
+    formData.append("saleValue", saleValue.value);
+    formData.append("distributorName", distributorName.value);
+    formData.append("latitude", position.coords.latitude);
+    formData.append("longitude", position.coords.longitude);
+    formData.append("photo", vanPhoto.files[0]);
+
+    fetch("PASTE_NEW_APPS_SCRIPT_URL_HERE", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+      alert(text);
+      submitBtn.disabled = false;
+    })
+    .catch(() => {
+      alert("Network error. Please try again.");
+      submitBtn.disabled = false;
+    });
+
+  }, () => {
+    alert("Location permission required");
+    submitBtn.disabled = false;
+  });
 }
 </script>
 
 </body>
 </html>
-    
