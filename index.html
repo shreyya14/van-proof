@@ -27,15 +27,22 @@
     label {
       font-weight: bold;
       display: block;
-      margin-top: 12px;
+      margin-top: 10px;
+      font-size: 14px;
     }
     input {
       width: 100%;
-      padding: 10px;
-      margin-top: 6px;
+      height: 38px;
+      padding: 6px 10px;
+      margin-top: 4px;
       border-radius: 6px;
       border: 1px solid #ccc;
       font-size: 14px;
+      box-sizing: border-box;
+    }
+    input[type="file"] {
+      height: auto;
+      padding: 6px;
     }
     button {
       width: 100%;
@@ -69,10 +76,10 @@
   <input type="text" id="empName" required>
 
   <label>Enter Van Vehicle Number *</label>
-  <input type="text" id="vanNumber" placeholder="Ex: HR12W3245" required>
+  <input type="text" id="vanNumber" required>
 
   <label>Enter Van Type *</label>
-  <input type="text" id="vanType" placeholder="Ex: Tata Ace, Ashok Leyland Dost" required>
+  <input type="text" id="vanType" required>
 
   <label>Upload Van Front Photo *</label>
   <input 
@@ -102,7 +109,6 @@
   const photoInput = document.getElementById("vanPhoto");
   const submitBtn = document.getElementById("submitBtn");
 
-  // Enable submit only after photo is taken
   photoInput.addEventListener("change", () => {
     if (photoInput.files.length > 0) {
       submitBtn.disabled = false;
@@ -110,12 +116,52 @@
   });
 
   function submitForm() {
-    alert(
-      "✅ VanMarket confirmation submitted successfully.\n\n" +
-      "Location, time, and photo will be recorded automatically."
-    );
+    const empId = document.getElementById("empId").value;
+    const empName = document.getElementById("empName").value;
+    const vanNumber = document.getElementById("vanNumber").value;
+    const vanType = document.getElementById("vanType").value;
+    const stockValue = document.getElementById("stockValue").value;
+    const saleValue = document.getElementById("saleValue").value;
+    const distributorName = document.getElementById("distributorName").value;
+    const photoFile = photoInput.files[0];
+
+    if (!photoFile) {
+      alert("Please capture van photo");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(position => {
+      const reader = new FileReader();
+      reader.onloadend = function () {
+
+        fetch("https://script.google.com/macros/s/AKfycbySmiroYdPprmwSImRH9ioQ7h-VOC7Fw08H5REgMUnjS5FSA3K63QpiP_YD1gsFNjL-MQ/exec", {
+          method: "POST",
+          body: JSON.stringify({
+            timestamp: new Date().toISOString(),
+            empId,
+            empName,
+            vanNumber,
+            vanType,
+            stockValue,
+            saleValue,
+            distributorName,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            image: reader.result.split(",")[1]
+          })
+        })
+        .then(() => {
+          alert("✅ Data saved successfully");
+          submitBtn.disabled = true;
+        });
+      };
+      reader.readAsDataURL(photoFile);
+    }, () => {
+      alert("Location permission is required");
+    });
   }
 </script>
 
 </body>
 </html>
+
