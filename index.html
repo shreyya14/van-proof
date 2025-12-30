@@ -69,7 +69,7 @@
 
 <div class="box">
 
-  <label>Enter Employee ID *</label>
+  <label>Enter Employee ERP ID *</label>
   <input type="text" id="empId" required>
 
   <label>Employee Name *</label>
@@ -116,13 +116,13 @@
   });
 
   function submitForm() {
-    const empId = document.getElementById("empId").value;
-    const empName = document.getElementById("empName").value;
-    const vanNumber = document.getElementById("vanNumber").value;
-    const vanType = document.getElementById("vanType").value;
+    const empId = document.getElementById("empId").value.trim();
+    const empName = document.getElementById("empName").value.trim();
+    const vanNumber = document.getElementById("vanNumber").value.trim();
+    const vanType = document.getElementById("vanType").value.trim();
     const stockValue = document.getElementById("stockValue").value;
     const saleValue = document.getElementById("saleValue").value;
-    const distributorName = document.getElementById("distributorName").value;
+    const distributorName = document.getElementById("distributorName").value.trim();
     const photoFile = photoInput.files[0];
 
     if (!photoFile) {
@@ -150,10 +150,16 @@
             image: reader.result.split(",")[1]
           })
         })
-        .then(() => {
-          alert("✅ Data saved successfully");
-          submitBtn.disabled = true;
+        .then(res => res.json())
+        .then(response => {
+          if (response.status === "error") {
+            alert("❌ " + response.message);
+          } else {
+            alert("✅ Data saved successfully");
+            submitBtn.disabled = true;
+          }
         });
+
       };
       reader.readAsDataURL(photoFile);
     }, () => {
@@ -164,4 +170,3 @@
 
 </body>
 </html>
-
